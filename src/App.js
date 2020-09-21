@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import { collect } from "./actions/collect";
+import {
+  useDispatch as uDispatch,
+  useSelector as uSelector,
+} from "react-redux";
+import ProductBox from "./components/ProductBox";
+import { useEffect } from "react";
+const axios = require("axios").default;
+export default function App() {
+  const dispatch = uDispatch();
 
-function App() {
+  useEffect(() => {
+    axios
+      .get("http://localhost:3030/api/phones")
+      .then((res) => dispatch(collect(res.data))); // res.data === [{},{}...]
+  }, []);
+
+  const productList = uSelector((state) => state);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div id="container">
+      {productList.map((el) => (
+        <ProductBox product={el.product} img={el.img} price={el.price} />
+      ))}
     </div>
   );
 }
-
-export default App;
